@@ -1,9 +1,12 @@
 const  express=require('express');
 const app= express();
-const {adminAuth}=require('./middlewares/adminAuth');
-app.use('/admin',adminAuth);
-app.get('/admin/allUsers',(req,res)=>{
+const {adminAuth}=require('../middlewares/adminAuth');
+app.use('/admin', adminAuth);
+app.get('/admin/allUsers', (req, res) => {
     res.send("List of all users");
+});
+app.use("/",(err,req,res,next)=>{
+    res.status(404).send("something went wrong ");
 });
 app.delete('/admin/deleteUser/:id',(req,res)=>{
     const userId=req.params.id;
