@@ -1,5 +1,5 @@
 const adminAuth=(req,res,next) =>{
-    const token="xyz";
+    var token="xqyz";
     if(token==="xyz"){
         next();
     }
@@ -7,4 +7,4 @@ const adminAuth=(req,res,next) =>{
         res.status(401).send("unauthorized");
     }
 };
-module.exports=adminAuth;
+module.exports={adminAuth};
