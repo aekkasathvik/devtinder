@@ -6,17 +6,13 @@ require('dotenv').config();
 
 const { connectDB } = require('./config/database');
 
-// Parse JSON body (important, even if you use static values now)
+// Parse JSON body and convert it into JS object so that we can use the body inside route handlers 
 app.use(express.json());
 
 // Signup route
 app.post('/signup', async (req, res) => {
     try {
-        const newUser = new User({
-            firstName: "Sathvik",
-            lastName: "Aekka",
-            age: 10
-        });
+        const newUser = new User(req.body);
 
         await newUser.save();  // FIXED: use await properly
 
@@ -25,8 +21,46 @@ app.post('/signup', async (req, res) => {
         res.status(500).send('Error creating user: ' + err);
     }
 });
-
+//get the user based on his email 
+app.get('/user',async (req,res)=>{
+   try{
+    const userRecord= await User.findOne({"email":req.body.email});
+      if(!userRecord) {
+        return res.status(400).send("User not found");
+      }
+      
+        res.send(userRecord);
+    }
+   catch(err) {
+       return  res.status(400).send("bad request" +err.message);
+   }
+});
+//feed API where we get all the USERS
+app.get('/feed',async (req,res)=>{
+    try{
+        const users= await User.find({});
+        res.send(users);    
+    }
+    catch(err) {
+        res.status(400).send("bad request" +err.message);
+    }
+});
 // Connect DB and start server
+
+app.delete('/deleteUser/:email',async (req,res)=>{
+    try{
+        const emailId=req.params.email;
+        const UserRecord =await User.findOneAndDelete({email:emailId});
+        if(!UserRecord) {
+            res.send("The user is not present in the database");
+        }
+        res.send("deleted the User record successfully");
+    }
+    catch(err) {
+        res.status(500).send("we can not delete the record");
+    }
+});
+//database connections and starting the server 
 connectDB()
     .then(() => {
         console.log('Database connected successfully');
