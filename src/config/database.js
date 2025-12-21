@@ -3,7 +3,6 @@ const url="mongodb+srv://test:abcd@NamasteNodeJs.mcvpc9p.mongodb.net/devtinder?r
 const connectDB = async () => {
     try {
         await mongoose.connect(url);
-        console.log("Connected to Database");
     } catch (err) {
         console.error("Error connecting to database:", err);
     }

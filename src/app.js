@@ -3,7 +3,6 @@ const app = express();
 
 const User = require('./models/users');  // FIXED: Capitalized Model import
 require('dotenv').config();
-
 const { connectDB } = require('./config/database');
 
 // Parse JSON body and convert it into JS object so that we can use the body inside route handlers 
@@ -45,8 +44,7 @@ app.get('/feed',async (req,res)=>{
         res.status(400).send("bad request" +err.message);
     }
 });
-// Connect DB and start server
-
+//deleting a user form the data base by email id 
 app.delete('/deleteUser/:email',async (req,res)=>{
     try{
         const emailId=req.params.email;
@@ -60,6 +58,22 @@ app.delete('/deleteUser/:email',async (req,res)=>{
         res.status(500).send("we can not delete the record");
     }
 });
+
+
+//update the user based on the detail provided
+app.patch('/updateUser/:email',async (req,res)=>{
+    try{
+        const emailId=req.params.email;
+        const updatedData=req.body;
+        const options={new:true};
+        const result= await User.findOneAndUpdate({email:emailId},updatedData,options);
+        res.send(result);
+    }           
+    catch(err) {
+        res.status(500).send("can not update the user"+ err.message);
+    }   
+});
+
 //database connections and starting the server 
 connectDB()
     .then(() => {
