@@ -12,9 +12,11 @@ const userSchema = new mongoose.Schema({
                 throw new Error('Gender is invalid');
         }
      }},
-    bio: { type: String },
+    bio: { type: String ,
+        default:"the default value for Bio ",
+     },
     dataOfBirth:{type:Date},
     interests: { type: [String] }
-});
+},{timestamps:true});
 
 module.exports = mongoose.model('User', userSchema);

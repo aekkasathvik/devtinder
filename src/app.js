@@ -2,7 +2,6 @@ const express = require('express');
 const app = express();
 
 const User = require('./models/users');  // FIXED: Capitalized Model import
-require('dotenv').config();
 const { connectDB } = require('./config/database');
 
 // Parse JSON body and convert it into JS object so that we can use the body inside route handlers 
@@ -17,7 +16,7 @@ app.post('/signup', async (req, res) => {
 
         res.status(201).send('User created successfully');
     } catch (err) {
-        res.status(500).send('Error creating user: ' + err);
+        res.status(500).send('Error creating user: ' + err.message);
     }
 });
 //get the user based on his email 
@@ -59,7 +58,6 @@ app.delete('/deleteUser/:email',async (req,res)=>{
     }
 });
 
-
 //update the user based on the detail provided
 app.patch('/updateUser/:email',async (req,res)=>{
     try{
@@ -73,6 +71,27 @@ app.patch('/updateUser/:email',async (req,res)=>{
         res.status(500).send("can not update the user"+ err.message);
     }   
 });
+
+//update route handling with userId 
+app.patch('/update/:userId',async (req,res)=>{
+    try {
+        const userId=req.params?.userId;
+        const updatedData=req.body;
+        const options={new:true};
+        const UPDATE_ALLOWED=["lastName","age","password","about","bio","interests"];
+        const fieldsRequested=Object.keys(req.body);
+        const isValid=fieldsRequested.every((field)=>UPDATE_ALLOWED.includes(field));
+        if(!isValid) {
+            throw new  Error(" we can not update this fields");
+        }
+        const result= await User.findByIdAndUpdate(userId, updatedData, options);
+        res.send(result);
+    }
+    catch(err) {
+        res.status(400).send("can not update the user because"+ err.message);   
+    }
+});
+
 
 //database connections and starting the server 
 connectDB()
