@@ -5,6 +5,10 @@ const { isValidSignUp } = require('./utils/validate');
 const User = require('./models/users');  // FIXED: Capitalized Model import
 const { connectDB } = require('./config/database');
 const bcrypt= require('bcrypt');
+const cookieParser = require('cookie-parser');
+
+// Middleware to parse cookies
+app.use(cookieParser());
 // Parse JSON body and convert it into JS object so that we can use the body inside route handlers 
 app.use(express.json());
 
