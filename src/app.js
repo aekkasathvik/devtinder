@@ -6,7 +6,8 @@ const User = require('./models/users');  // FIXED: Capitalized Model import
 const { connectDB } = require('./config/database');
 const bcrypt= require('bcrypt');
 const cookieParser = require('cookie-parser');
-
+const jwt=require('jsonwebtoken');
+const userAuth=require('./middlewares/userAuth');
 // Middleware to parse cookies
 app.use(cookieParser());
 // Parse JSON body and convert it into JS object so that we can use the body inside route handlers 
@@ -62,9 +63,9 @@ app.post("/login", async (req, res) => {
         if (!isMatch) {
             return res.status(400).send("Invalid credentials");
         }
-
-        // 4. Success
-      res.cookie("abcde","hxhdid");
+        //we have the user now create a cookie for the user 
+        const token=jwt.sign({_id:userRecord._id},"coder$4849",{expiresIn:"1h"});
+        res.cookie("token",token);
         return res.status(200).send("Login successful");
 
     } catch (err) {
@@ -73,80 +74,17 @@ app.post("/login", async (req, res) => {
         console.log("login attempt completed");
     }
 });
-
-//get the user based on his email 
-app.get('/user',async (req,res)=>{
-   try{
-    const userRecord= await User.findOne({"email":req.body.email});
-      if(!userRecord) {
-        return res.status(400).send("User not found");
-      }
-      
+//get the profile of the user based on cookie 
+app.get('/profile',userAuth , async (req,res)=>{
+    try {
+       const userRecord=req.user;
         res.send(userRecord);
     }
-   catch(err) {
-       return  res.status(400).send("bad request" +err.message);
-   }
-});
-//feed API where we get all the USERS
-app.get('/feed',async (req,res)=>{
-    try{
-        const users= await User.find({});
-        res.send(users);    
-    }
     catch(err) {
-        res.status(400).send("bad request" +err.message);
+        res.status(400).send("bad request"+ err.message);
     }
-});
-//deleting a user form the data base by email id 
-app.delete('/deleteUser/:email',async (req,res)=>{
-    try{
-        const emailId=req.params.email;
-        const UserRecord =await User.findOneAndDelete({email:emailId});
-        if(!UserRecord) {
-            res.send("The user is not present in the database");
-        }
-        res.send("deleted the User record successfully");
-    }
-    catch(err) {
-        res.status(500).send("we can not delete the record");
-    }
-});
 
-//update the user based on the detail provided
-app.patch('/updateUser/:email',async (req,res)=>{
-    try{
-        const emailId=req.params.email;
-        const updatedData=req.body;
-        const options={new:true};
-        const result= await User.findOneAndUpdate({email:emailId},updatedData,options);
-        res.send(result);
-    }           
-    catch(err) {
-        res.status(500).send("can not update the user"+ err.message);
-    }   
 });
-
-//update route handling with userId 
-app.patch('/update/:userId',async (req,res)=>{
-    try {
-        const userId=req.params?.userId;
-        const updatedData=req.body;
-        const options={new:true};
-        const UPDATE_ALLOWED=["lastName","age","password","about","bio","interests"];
-        const fieldsRequested=Object.keys(req.body);
-        const isValid=fieldsRequested.every((field)=>UPDATE_ALLOWED.includes(field));
-        if(!isValid) {
-            throw new  Error(" we can not update this fields");
-        }
-        const result= await User.findByIdAndUpdate(userId, updatedData, options);
-        res.send(result);
-    }
-    catch(err) {
-        res.status(400).send("can not update the user because"+ err.message);   
-    }
-});
-
 
 //database connections and starting the server 
 connectDB()
