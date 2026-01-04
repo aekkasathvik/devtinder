@@ -1,23 +1,24 @@
 const express = require('express');
 const app = express();
-
+const { isValidSignUp } = require('./utils/validate');
 const User = require('./models/users');  // FIXED: Capitalized Model import
 const { connectDB } = require('./config/database');
-
+const {bcrypt} = require('bcrypt');
 // Parse JSON body and convert it into JS object so that we can use the body inside route handlers 
 app.use(express.json());
 
 // Signup route
 app.post('/signup', async (req, res) => {
-    try {
-        const newUser = new User(req.body);
+   try {
+       
 
-        await newUser.save();  // FIXED: use await properly
+   }
+   catch (err) {
 
-        res.status(201).send('User created successfully');
-    } catch (err) {
-        res.status(500).send('Error creating user: ' + err.message);
-    }
+   }
+   finally {
+    console.log("Signup attempt completed");
+   }
 });
 //get the user based on his email 
 app.get('/user',async (req,res)=>{
