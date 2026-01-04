@@ -1,7 +1,7 @@
 {
   "name": "devtinder",
   "version": "1.0.0",
-  "description": "applicaiton where developers connect with each other ",
+  "description": "application where developers connect with each other ",
   "main": "index.js",
   "scripts": {
     "start": "node src/app.js",
