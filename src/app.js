@@ -55,11 +55,7 @@ app.post("/login", async (req, res) => {
         }
 
         // 3. Password verification
-        const isMatch = await bcrypt.compare(
-            password,
-            userRecord.password
-        );
-
+        const isMatch = await userRecord.validatePassword(password);
         if (!isMatch) {
             return res.status(400).send("Invalid credentials");
         }
