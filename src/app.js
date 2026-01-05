@@ -64,7 +64,8 @@ app.post("/login", async (req, res) => {
             return res.status(400).send("Invalid credentials");
         }
         //we have the user now create a cookie for the user 
-        const token=jwt.sign({_id:userRecord._id},"coder$4849",{expiresIn:"1h"});
+        const token=await userRecord.getJWT();
+        console.log(token);
         res.cookie("token",token);
         return res.status(200).send("Login successful");
 

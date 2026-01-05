@@ -1,5 +1,7 @@
+const { JsonWebTokenError } = require('jsonwebtoken');
 const mongoose = require('mongoose');
 const validator = require('validator');
+const jwt=require('jsonwebtoken');
 const userSchema = new mongoose.Schema({
     firstName: { type: String ,required: true , minLength:2},
     lastName: { type: String },
@@ -30,5 +32,10 @@ const userSchema = new mongoose.Schema({
     dataOfBirth:{type:Date},
     interests: { type: [String] }
 },{timestamps:true});
-
+userSchema.methods.getJWT=async function () {
+    //we generate the token and pass it to the client
+    const user=this;
+    const token=jwt.sign({_id:user._id},"coder$4849",{expiresIn:"1h"});
+    return token;
+}
 module.exports = mongoose.model('User', userSchema);
