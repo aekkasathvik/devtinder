@@ -1,11 +1,11 @@
 //import the users model
 const User = require('../models/users');
 const jwt=require('jsonwebtoken');
-
+const bcrypt= require('bcrypt');
 //middleware function to authenticate user based on cookie      
 const userAuth=async (req,res,next)=>{
     try {
-        //get the cookie
+        //get the exiting token from the cookies
         const {token}=req.cookies;
         if(!token) {
             throw new Error("No token found!!!");

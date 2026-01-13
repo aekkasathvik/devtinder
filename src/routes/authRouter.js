@@ -1,6 +1,7 @@
 const express = require('express');
 const authRouter = express.Router();
 const User = require('../models/users');
+const jwt=require('jsonwebtoken');
 const bcrypt= require('bcrypt');
 const validator = require('validator');
 const { isValidSignUp } = require('../utils/validate');
@@ -61,4 +62,4 @@ authRouter.post("/login", async (req, res) => {
         console.log("login attempt completed");
     }
 });
-module.exports={authRouter};
+module.exports=authRouter;

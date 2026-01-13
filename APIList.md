@@ -4,4 +4,4 @@ All the API's related to devtinder
 -POST/logout 
 -GET /profileView
 -PATCH /update/details
--PATCH /update/password
+-PATCH /update/password 
