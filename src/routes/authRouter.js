@@ -1,5 +1,6 @@
 const express = require('express');
 const authRouter = express.Router();
+const userAuth=require('../middlewares/userAuth');
 const User = require('../models/users');
 const jwt=require('jsonwebtoken');
 const bcrypt= require('bcrypt');
@@ -54,6 +55,7 @@ authRouter.post("/login", async (req, res) => {
         const token=await userRecord.getJWT();
         console.log(token);
         res.cookie("token",token);
+        res.user=userRecord;
         return res.status(200).send("Login successful");
 
     } catch (err) {
@@ -62,4 +64,22 @@ authRouter.post("/login", async (req, res) => {
         console.log("login attempt completed");
     }
 });
+
+//logout Route - Clear the cookie+check if the user is valid user or not first and then logout
+authRouter.post('/logout',userAuth,async (req,res)=>{
+
+    try {
+       
+       res.cookie('token' ,null ,{expires: new Date(Date.now())})
+       .send('Logged Out successfully').status(200);
+
+    }
+    catch(err) {
+        res.status(500).send("Error during logout:" +err.message);
+    }
+    finally {
+        console.log("Logout route executed");
+    }
+});
+
 module.exports=authRouter;
