@@ -42,5 +42,20 @@ profileRouter.get('/profile',userAuth,async (req,res)=>{
         console.log("Update profile route executed");
     }
  });
-       
+
+
+ //updae the profile password API
+
+ profileRouter.patch('/updatePassword',userAuth,(req,res)=>{
+    try {
+
+    }
+    catch(err) {
+
+    }
+    finally {
+        console.log("Update password route executed");
+    }
+
+ });
  module.exports=profileRouter;
