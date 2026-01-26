@@ -23,12 +23,12 @@ requestRouter.post('/send/:status/:toUserId',userAuth ,async (req,res)=> {
         const newRequest=new connectionRequest({fromUserId , toUserId , status});
         const data=await newRequest.save();
         res.json({
-            message:"connection request send successfully",
+            message:req.user.firstName+" sent a "+status+"request to user"+toUserId,
             data:data
         })
     }
     catch(err) {
-        res.status().send("error in sending connection request"+err.message);   
+        res.status(400).send("error in sending connection request"+err.message);   
     }
     finally {
         console.log("send connection request route executed");
