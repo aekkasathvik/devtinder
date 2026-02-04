@@ -34,5 +34,44 @@ requestRouter.post('/send/:status/:toUserId',userAuth ,async (req,res)=> {
         console.log("send connection request route executed");
     }
 })
-requestRouter.get('/requests',userAuth , async (req,res)=>{});       
+//get all the request associated with this user
+requestRouter.get('/requests',userAuth , async (req,res)=>{});
+//handling the user response to a connection request
+requestRouter.post('/review/:status/:requestId',async (req,res)=>{
+    //details of the logged in user
+    
+    try {
+      const loggedInUser=req.user;
+      const status=req.params.status;
+      const requestId=req.params.requestId;
+      const AllowedStatus=["ignored","accepted"];
+    if(!AllowedStatus.includes(status)) {
+        return res.status(400).send(`status ${status} is not allowed`);
+    }
+    //get the connection request from the database
+    const connectionReq=await connectionRequest.findOne({_id:requestId});
+    if(!connectionReq) {
+        return res.status(404).json({
+            message:"connection request not found",
+        })
+    }
+    if(!connectionReq.toUserId.equals(loggedInUser._id)) {
+        return res.status(400).json({
+            message:"you are not authorized to review this request",
+        })
+    }
+    connectionReq.status=status;
+    const data=await connectionReq.save();
+    res.json({
+        message:`request ${requestId} has been ${status} by user ${loggedInUser._id}`,
+        data:data
+    })
+    }
+    catch(err) {
+        res.json({"error" : err.message});
+    }
+    finally {
+
+    }
+})
 module.exports=requestRouter;

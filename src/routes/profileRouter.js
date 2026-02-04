@@ -44,7 +44,7 @@ profileRouter.get('/profile',userAuth,async (req,res)=>{
  });
 
 
- //updae the profile password API
+ //update the profile password API
 
  profileRouter.patch('/updatePassword',userAuth,(req,res)=>{
     try {

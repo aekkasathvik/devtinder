@@ -13,7 +13,8 @@ connectionRequestSchema.pre("save", async function () {
         throw new Error("fromUserId and toUserId cannot be the same");
     }
 });
-
+//indexing on the fromUserId and toUserId to ensure uniqueness of connection requests between two users
+connectionRequestSchema.index({fromUserId:1,toUserId:1},{unique:true});
 
 const connectionRequestModel=mongoose.model('connectionRequest',connectionRequestSchema);
 module.exports=connectionRequestModel;
