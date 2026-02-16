@@ -35,21 +35,48 @@ requestRouter.post('/send/:status/:toUserId',userAuth ,async (req,res)=> {
     }
 })
 //get all the request associated with this user
-requestRouter.get('/requests',userAuth , async (req,res)=>{});
+requestRouter.get('/getRequest',userAuth , async (req,res)=>{
+
+    try{
+        //details of the logged in user
+        const loggedInUser=req.user;
+        const requests=await connectionRequest.find({toUserId:loggedInUser._id});
+        if(requests.length===0){
+            return res.status(404).json({
+                message:"no connection requests found for user "+loggedInUser._id,
+            })
+        }
+        res.status(200).json({
+            message:"connection requests for user "+loggedInUser._id,
+            data:requests
+        })
+    }
+    catch(err){
+
+    }
+    finally{
+        console.log("get connection request route executed");
+    }
+});
 //handling the user response to a connection request
-requestRouter.post('/review/:status/:requestId',async (req,res)=>{
+requestRouter.post('/review/:status/:requestId',userAuth ,async (req,res)=>{
     //details of the logged in user
     
     try {
       const loggedInUser=req.user;
       const status=req.params.status;
       const requestId=req.params.requestId;
-      const AllowedStatus=["ignored","accepted"];
+      const AllowedStatus=["rejected","accepted"];
     if(!AllowedStatus.includes(status)) {
         return res.status(400).send(`status ${status} is not allowed`);
     }
     //get the connection request from the database
-    const connectionReq=await connectionRequest.findOne({_id:requestId});
+   const connectionReq = await connectionRequest.findOne({
+         _id: requestId,
+          toUserId: loggedInUser._id,
+          status: "interested"
+    });
+
     if(!connectionReq) {
         return res.status(404).json({
             message:"connection request not found",
@@ -68,10 +95,10 @@ requestRouter.post('/review/:status/:requestId',async (req,res)=>{
     })
     }
     catch(err) {
-        res.json({"error" : err.message});
+        res.status(400).json({"error" : err.message});
     }
     finally {
-
+        console.log("review connection request route executed");
     }
 })
 module.exports=requestRouter;

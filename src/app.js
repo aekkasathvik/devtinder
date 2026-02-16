@@ -4,7 +4,8 @@ const { connectDB } = require('./config/database');   // database connection mod
 const cookieParser = require('cookie-parser');        //cookie parser middleware
 const profileRouter=require('./routes/profileRouter'); //profile router 
 const authRouter=require('./routes/authRouter');  //auth router
-const requestRouter=require('./routes/requestRouter'); //user router
+const requestRouter=require('./routes/requestRouter'); //request  router
+const userRouter=require('./routes/userRoutes');//user router
 // Middleware to parse cookies
 app.use(cookieParser());
 // Parse JSON body and convert it into JS object so that we can use the body inside route handlers 
@@ -15,7 +16,8 @@ app.use('/user',profileRouter);
 app.use('/auth',authRouter);
 //using the request touter for all the routes starting with /request
 app.use('/request',requestRouter);
-
+//using the user router 
+app.use('/user',userRouter);
 //database connections and starting the server 
 connectDB()
     .then(() => {
